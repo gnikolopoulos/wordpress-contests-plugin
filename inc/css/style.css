@@ -1,0 +1,65 @@
+.contest-entry {
+  width: 500px;
+}
+
+.contest-entry .form-group {
+  display: block;
+  padding: 2px 5px;
+}
+
+.contest-entry .form-group input {
+  width: 49.45%;
+}
+
+.contest-entry .wide input {
+  width: 100%;
+}
+
+.contest-entry .check-group {
+  padding: 20px 5px;
+}
+
+.contest-entry .check-group input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.contest-entry #validation {
+  color: #A94442;
+  padding: 13px 10px 15px;
+  border: 1px solid #EBCCD1;
+  width: 100%;
+  text-align: center;
+  background: #F2DEDE;
+}
+
+.contest-entry #validation p {
+  margin-bottom: 0;
+}
+
+.contest-entry .btn {
+  display: block;
+  margin: 30px auto 0;
+  background-color: #24890D;
+  border: 0px none;
+  border-radius: 2px;
+  color: #FFF;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 30px 11px;
+  text-transform: uppercase;
+  vertical-align: bottom;
+}
+
+.contest-entry .btn:hover {
+  background-color: #41A62A;
+}
+
+.form-entry .message h2 {
+  font-size: 20px;
+  line-height: 1;
+  text-align: center;
+  line-height: 1.4em;
+  background: #ff9;
+  padding: 10px 20px;
+  border: 1px solid #ff3;
+}
