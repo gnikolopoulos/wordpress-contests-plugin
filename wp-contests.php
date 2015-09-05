@@ -137,6 +137,7 @@ function ajax_entry() {
     if( !check_contestant($email) ) {
       $post = wp_insert_post( $postData );
     } else {
+      wp_delete_attachment($file);
       echo json_encode($duplicate);
       exit;
     }
