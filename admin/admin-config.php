@@ -133,6 +133,14 @@
             ),
 
             array(
+                'id'       => 'paypal_mode',
+                'type'     => 'switch',
+                'title'    => __('Sandbox mode', 'contests'),
+                'subtitle' => __('Enable PayPal Sandbox mode', 'contests'),
+                'default'  => true,
+            ),
+
+            array(
                 'id'       => 'entry_price',
                 'type'     => 'text',
                 'title'    => __( 'Fee for entering the contest', 'contests' ),

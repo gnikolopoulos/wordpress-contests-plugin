@@ -240,6 +240,11 @@ function contestants_view( $atts ) {
 add_shortcode('contest-entry-form', 'entry_form');
 function entry_form() {
   global $contest;
+  if( $contest['paypal_mode'] ) {
+    $paypal_url = "https://www.sandbox.paypal.com/cgi-bin/webscr";
+  } else {
+    $paypal_url = "https://www.paypal.com/cgi-bin/webscr";
+  }
   $html = '<div class="form-entry">
             <form class="form-inline contest-entry" role="form" enctype="multipart/form-data">
               <div class="form-group">
@@ -278,7 +283,7 @@ function entry_form() {
               <h2></h2>
             </div>
             <div id="paypal" style="display: none;">
-              <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+              <form action="' . $paypal_url . '" method="post">
                 <input type="hidden" name="cmd" value="_xclick">
                 <input type="hidden" name="business" value="' . $contest['paypal_email'] . '">
                 <input type="hidden" name="item_name" value="Contest entry">
