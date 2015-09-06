@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Wordpress Contests Plugin\n"
-"POT-Creation-Date: 2015-09-06 15:09+0200\n"
-"PO-Revision-Date: 2015-09-06 15:09+0200\n"
+"POT-Creation-Date: 2015-09-06 17:59+0200\n"
+"PO-Revision-Date: 2015-09-06 17:59+0200\n"
 "Last-Translator: George Nikolopoulos <georgen@interactive-design.gr>\n"
 "Language-Team: Interactive Design <info@interactive-design.gr>\n"
 "Language: en_US\n"
@@ -60,7 +60,31 @@ msgid "Currency"
 msgstr ""
 
 #: ../admin/admin-config.php:160
-msgid "Page ID to return to after transaction"
+msgid "Page to return to after transaction"
+msgstr ""
+
+#: ../admin/admin-config.php:167
+msgid "Email Settings"
+msgstr ""
+
+#: ../admin/admin-config.php:168
+msgid "Email Setting for notifications"
+msgstr ""
+
+#: ../admin/admin-config.php:175
+msgid "Email recipient"
+msgstr ""
+
+#: ../admin/admin-config.php:182
+msgid "Send from email"
+msgstr ""
+
+#: ../admin/admin-config.php:189
+msgid "Email Subject"
+msgstr ""
+
+#: ../admin/admin-config.php:196
+msgid "Include attachments?"
 msgstr ""
 
 #: ../admin/framework.php:226
