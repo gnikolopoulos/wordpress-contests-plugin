@@ -342,12 +342,133 @@ function handle_ipn_update( $posted ) {
   add_post_meta($item_number, "field_transaction", $trans_id);
   add_post_meta($item_number, "field_payer_email", $payer);
   add_post_meta($item_number, "field_pay_amount", $total);
+
+  notify_admin( $posted );
 }
 
 add_action('paypal_ipn_for_wordpress_payment_status_reversed', 'handle_ipn_delete');
 function handle_ipn_delete( $posted ) {
   $item_number = isset($posted['item_number']) ? $posted['item_number'] : '';
   wp_delete_post( $item_number );
+}
+
+// Send email to admin
+function notify_admin( $posted ) {
+  global $contest;
+  add_filter( 'wp_mail_content_type', 'set_html_content_type' );
+
+  $item_number = $posted['item_number'];
+  $files = rwmb_meta("field_file", "type=file_advanced", $item_number);
+  foreach($files as $file) {
+    $attachments = $file['path'];
+    $attachments_url = $file['url'];
+  }
+  $headers = 'From: ' . get_bloginfo("name") . ' <' . $contest['email_from'] . '>' . "\r\n";
+  $mailTo = $contest['email_to'];
+  $mailSubject = $contest['email_subject'];
+  $mailMessage = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+                  <html xmlns="http://www.w3.org/1999/xhtml">
+
+                  <head>
+                    <title></title>
+                    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+                    <meta name="robots" content="noindex,nofollow" />
+                    <meta property="og:title" content="My First Campaign" />
+                  </head>
+
+                  <body style="margin: 0;mso-line-height-rule: exactly;padding: 0;min-width: 100%;background-color: #fbfbfb">
+                    <center class="wrapper" style="display: table;table-layout: fixed;width: 100%;min-width: 620px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;background-color: #fbfbfb">
+                      <table class="gmail" style="border-collapse: collapse;border-spacing: 0;width: 650px;min-width: 650px">
+                        <tbody>
+                          <tr>
+                            <td style="padding: 0;vertical-align: top;font-size: 1px;line-height: 1px">&nbsp;</td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <table class="border" style="border-collapse: collapse;border-spacing: 0;font-size: 1px;line-height: 1px;background-color: #e9e9e9;Margin-left: auto;Margin-right: auto" width="602">
+                        <tbody>
+                          <tr>
+                            <td style="padding: 0;vertical-align: top">&#8203;</td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <table class="centered" style="border-collapse: collapse;border-spacing: 0;Margin-left: auto;Margin-right: auto">
+                        <tbody>
+                          <tr>
+                            <td class="border" style="padding: 0;vertical-align: top;font-size: 1px;line-height: 1px;background-color: #e9e9e9;width: 1px">&#8203;</td>
+                            <td style="padding: 0;vertical-align: top">
+                              <table class="one-col" style="border-collapse: collapse;border-spacing: 0;Margin-left: auto;Margin-right: auto;width: 600px;background-color: #ffffff;font-size: 14px;table-layout: fixed" emb-background-style>
+                                <tbody>
+                                  <tr>
+                                    <td class="column" style="padding: 0;vertical-align: top;text-align: left">
+                                      <div>
+                                        <div class="column-top" style="font-size: 32px;line-height: 32px">&nbsp;</div>
+                                      </div>
+                                      <table class="contents" style="border-collapse: collapse;border-spacing: 0;table-layout: fixed;width: 100%">
+                                        <tbody>
+                                          <tr>
+                                            <td class="padded" style="padding: 0;vertical-align: top;padding-left: 32px;padding-right: 32px;word-break: break-word;word-wrap: break-word">
+                                              <h1 style="Margin-top: 0;color: #565656;font-weight: 700;font-size: 36px;Margin-bottom: 18px;font-family: sans-serif;line-height: 42px">' . $contest['email_subject'] . '</h1>
+                                              <p style="Margin-top: 0;color: #565656;font-family: Georgia,serif;font-size: 16px;line-height: 25px;Margin-bottom: 25px">Hey there!</p>
+                                              <p style="Margin-top: 0;color: #565656;font-family: Georgia,serif;font-size: 16px;line-height: 25px;Margin-bottom: 25px">There is a new contest entry for you. Here are the specifics:</p>
+                                              <ul style="Margin-top: 0;padding-left: 0;color: #565656;font-family: Georgia,serif;font-size: 16px;line-height: 25px;Margin-left: 18px;Margin-bottom: 25px">
+                                                <li style="Margin-top: 0;padding-left: 0">Entry ID: WTH-' . $item_number . '</li>
+                                                <li style="Margin-top: 0;padding-left: 0">First Name: ' . get_post_meta($item_number, "field_first_name", true) . '</li>
+                                                <li style="Margin-top: 0;padding-left: 0">Last Name: ' . get_post_meta($item_number, "field_last_name", true) . '</li>
+                                                <li style="Margin-top: 0;padding-left: 0">Address: ' . get_post_meta($item_number, "field_address", true) . '</li>
+                                                <li style="Margin-top: 0;padding-left: 0">City / State / Zip: ' . get_post_meta($item_number, "field_address_city", true) . ', ' . get_post_meta($item_number, "field_address_state", true) . ', ' . get_post_meta($item_number, "field_address_zip", true) . '</li>
+                                                <li style="Margin-top: 0;padding-left: 0">Email: ' . get_post_meta($item_number, "field_email", true) . '</li>
+                                                <li style="Margin-top: 0;padding-left: 0">Phone: ' . get_post_meta($item_number, "field_phone", true) . '</li>
+                                              </ul>
+                                              <p style="Margin-top: 0;color: #565656;font-family: Georgia,serif;font-size: 16px;line-height: 25px;Margin-bottom: 25px">You can download the file by clicking the button below. The file is also available as an attachment.</p>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                      <table class="contents" style="border-collapse: collapse;border-spacing: 0;table-layout: fixed;width: 100%">
+                                        <tbody>
+                                          <tr>
+                                            <td class="padded" style="padding: 0;vertical-align: top;padding-left: 32px;padding-right: 32px;word-break: break-word;word-wrap: break-word">
+                                              <div class="btn" style="Margin-bottom: 24px;text-align: center">
+                                                <a style="border-radius: 3px;display: inline-block;font-size: 14px;font-weight: 700;line-height: 24px;padding: 13px 35px 12px 35px;text-align: center;text-decoration: none !important;transition: opacity 0.2s ease-in;color: #fff;font-family: Georgia,serif;background-color: #41637e" href="' . $attachments_url . '">View submission</a>
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+
+                                      <div class="column-bottom" style="font-size: 8px;line-height: 8px">&nbsp;</div>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                            <td class="border" style="padding: 0;vertical-align: top;font-size: 1px;line-height: 1px;background-color: #e9e9e9;width: 1px">&#8203;</td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <table class="border" style="border-collapse: collapse;border-spacing: 0;font-size: 1px;line-height: 1px;background-color: #e9e9e9;Margin-left: auto;Margin-right: auto" width="602">
+                        <tbody>
+                          <tr>
+                             <td style="padding: 0;vertical-align: top">&#8203;</td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <div class="spacer" style="font-size: 1px;line-height: 32px;width: 100%">&nbsp;</div>
+                    </center>
+                  </body>
+                  </html>';
+  wp_mail( $mailTo, $mailSubject, $mailMessage, $headers, $attachments );
+
+  remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
+}
+
+function set_html_content_type() {
+  return 'text/html';
 }
 
 ?>

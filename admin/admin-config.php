@@ -163,6 +163,42 @@
         )
     ) );
 
+    Redux::setSection( $opt_name, array(
+        'title'      => __( 'Email Settings', 'contests' ),
+        'desc'       => __( 'Email Setting for notifications', 'contests' ),
+        'id'         => 'opt-email',
+        'icon'       => 'el el-envelope',
+        'fields'     => array(
+            array(
+                'id'       => 'email_to',
+                'type'     => 'text',
+                'title'    => __( 'Email recipient', 'contests' ),
+                'default'  => 'info@example.com',
+            ),
+
+            array(
+                'id'       => 'email_from',
+                'type'     => 'text',
+                'title'    => __( 'Send from email', 'contests' ),
+                'default'  => 'info@example.com',
+            ),
+
+            array(
+                'id'       => 'email_subject',
+                'type'     => 'text',
+                'title'    => __( 'Email Subject', 'contests' ),
+                'default'  => 'New contest entry',
+            ),
+
+            array(
+                'id'       => 'include_att',
+                'type'     => 'switch',
+                'title'    => __('Include attachments?', 'contests'),
+                'default'  => true,
+            ),
+        )
+    ) );
+
     /*
      * <--- END SECTIONS
      */
