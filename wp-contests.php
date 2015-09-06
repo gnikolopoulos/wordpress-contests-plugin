@@ -120,6 +120,9 @@ function ajax_entry() {
   $fname = wp_strip_all_tags($_POST['fname']);
   $lname = wp_strip_all_tags($_POST['lname']);
   $addr  = wp_strip_all_tags($_POST['address']);
+  $city  = wp_strip_all_tags($_POST['city']);
+  $state  = wp_strip_all_tags($_POST['state']);
+  $zip  = wp_strip_all_tags($_POST['zip']);
   $phone = wp_strip_all_tags($_POST['phone']);
   $file = $_POST['file'];
 
@@ -148,6 +151,9 @@ function ajax_entry() {
       add_post_meta($post, "field_last_name", $lname);
       add_post_meta($post, "field_email", $email);
       add_post_meta($post, "field_address", $addr);
+      add_post_meta($post, "field_address_city", $city);
+      add_post_meta($post, "field_address_state", $state);
+      add_post_meta($post, "field_address_zip", $zip);
       add_post_meta($post, "field_status", "pending");
       add_post_meta($post, "field_phone", $phone);
       add_post_meta($post, "field_file", $file);
@@ -256,8 +262,17 @@ function entry_form() {
                 <input type="email" class="form-control" name="email" id="email" placeholder="Email">
               </div>
 
-              <div class="form-group">
+              <div class="form-group wide">
                 <input type="text" class="form-control" name="address" id="address" placeholder="Address">
+              </div>
+
+              <div class="form-group narrow">
+                <input type="text" class="form-control" name="address_city" id="address_city" placeholder="City">
+                <input type="text" class="form-control" name="address_state" id="address_state" placeholder="State">
+                <input type="text" class="form-control" name="address_zip" id="address_zip" placeholder="Zip">
+              </div>
+
+              <div class="form-group wide">
                 <input type="text" class="form-control" name="phone" id="phone" placeholder="Phone Number">
               </div>
 

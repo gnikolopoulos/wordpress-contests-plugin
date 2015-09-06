@@ -18,6 +18,19 @@
         required: true,
         minlength: 20
       },
+      address_city: {
+        required: true,
+        minlength: 5
+      },
+      address_state: {
+        required: true,
+        minlength: 2
+      },
+      address_zip: {
+        required: true,
+        minlength: 5,
+        maxlength: 5
+      },
       entryfile: {
         required: true,
         extension: "jpg|png|gif|pdf|zip|avi|mp4|mov|wmv|mp3|7z"
@@ -25,7 +38,7 @@
     },
     messages: {
       entryfile: {
-        required: "Di you forget to include a file?",
+        required: "Did you forget to include a file?",
         extension: "Only video, audio, zip and PDF files are allowed."
       }
     },
@@ -40,6 +53,9 @@
     var lname = $('#last-name').val();
     var email = $('#email').val();
     var address = $('#address').val();
+    var city = $('#address_city').val();
+    var state = $('#address_state').val();
+    var zip = $('#address_zip').val();
     var phone = $('#phone').val();
     var security = $('#security').val();
     var file = $('#entryfile').files;
@@ -76,14 +92,17 @@
             type: "POST",
             dataType : "json",
             data: {
-              action: 'entry_add',
+              action:'entry_add',
               fname:fname,
               lname:lname,
               email:email,
               address:address,
+              city:city,
+              state:state,
+              zip:zip,
               phone:phone,
-              file: file_id,
-              nonce: security,
+              file:file_id,
+              nonce:security,
             },
             success: function( response ) {
               //console.log( response );

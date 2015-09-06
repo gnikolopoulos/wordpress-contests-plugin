@@ -48,7 +48,34 @@ function theme_register_meta_boxes( $meta_boxes ) {
                 'name' => __( 'Address', 'contests' ),
                 'id' => "{$prefix}address",
                 'type' => 'text',
-                'std' => __( 'Some Street 12, CA 12345', 'contests' ),
+                'std' => __( 'Some Street 12', 'contests' ),
+                'clone' => false,
+            ),
+
+            // City
+            array(
+                'name' => __( 'City', 'contests' ),
+                'id' => "{$prefix}address_city",
+                'type' => 'text',
+                'std' => __( 'Miami', 'contests' ),
+                'clone' => false,
+            ),
+
+            // State
+            array(
+                'name' => __( 'State', 'contests' ),
+                'id' => "{$prefix}address_state",
+                'type' => 'text',
+                'std' => __( 'FL', 'contests' ),
+                'clone' => false,
+            ),
+
+            // Zip
+            array(
+                'name' => __( 'Zip', 'contests' ),
+                'id' => "{$prefix}address_zip",
+                'type' => 'text',
+                'std' => __( '12345', 'contests' ),
                 'clone' => false,
             ),
 

@@ -15,6 +15,10 @@
   width: 100%;
 }
 
+.contest-entry .narrow input {
+  width: 32.9%;
+}
+
 .contest-entry .check-group {
   padding: 20px 5px;
 }
