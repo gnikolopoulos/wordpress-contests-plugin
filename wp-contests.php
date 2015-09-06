@@ -3,16 +3,16 @@
 * Plugin Name: Wordpress Contest Entries
 * Plugin URI: http://interactive-design.gr
 * Description: A contest entries plugin for wordpress
-* Version: 1.0
+* Version: 1.2
 * Author: George Nikolopoulos
 * Author URI: http://interactive-design.gr
 * Text Domain: contests
 **/
 
-function load_plugin_textdomain() {
-    load_plugin_textdomain( 'contests', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+function contests_load_plugin_textdomain() {
+  load_plugin_textdomain( 'contests', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
 }
-add_action( 'plugins_loaded', 'load_plugin_textdomain' );
+add_action( 'plugins_loaded', 'contests_load_plugin_textdomain' );
 
 // Definitions
 define( 'PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
