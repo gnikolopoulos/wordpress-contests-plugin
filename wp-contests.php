@@ -6,11 +6,13 @@
 * Version: 1.0
 * Author: George Nikolopoulos
 * Author URI: http://interactive-design.gr
+* Text Domain: contests
 **/
 
-ini_set('display_errors',1);
-ini_set('display_startup_errors',1);
-error_reporting(-1);
+function load_plugin_textdomain() {
+    load_plugin_textdomain( 'contests', FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+}
+add_action( 'plugins_loaded', 'load_plugin_textdomain' );
 
 // Definitions
 define( 'PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

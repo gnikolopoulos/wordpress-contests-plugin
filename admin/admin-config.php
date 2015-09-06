@@ -157,7 +157,7 @@
             array(
                 'id'       => 'return_page',
                 'type'     => 'select',
-                'title'    => __( 'Page ID to return to after transaction', 'contests' ),
+                'title'    => __( 'Page to return to after transaction', 'contests' ),
                 'data'     => 'pages',
             ),
         )
