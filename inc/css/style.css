@@ -36,8 +36,16 @@
   background: #F2DEDE;
 }
 
-.contest-entry #validation p {
-  margin-bottom: 0;
+.contest-entry #validation label {
+  display: block;
+}
+
+.contest-entry progress[value] {
+  -webkit-appearance: none;
+   appearance: none;
+
+  width: 100%;
+  height: 20px;
 }
 
 .contest-entry .btn {

@@ -5,6 +5,16 @@
       email: {
         required: true,
         email: true,
+        remote: {
+          url: ajax.ajax_url,
+          type: "post",
+          data: {
+            action: 'email_check',
+            email: function() {
+              return $( "#email" ).val();
+            }
+          }
+        }
       },
       email2: {
         required: true,
@@ -29,6 +39,9 @@
       address_zip: {
         required: true
       },
+      phone: {
+        phoneUS: true
+      },
       entryfile: {
         required: true,
         extension: "jpg|png|gif|pdf|zip|avi|mp4|mov|wmv|mp3|7z"
@@ -44,6 +57,31 @@
       }
     },
     messages: {
+      first_name: {
+        required: "First name is a required field"
+      },
+      last_name: {
+        required: "Last name is a required field"
+      },
+      address: {
+        required: "You need to enter your address"
+      },
+      address_city: {
+        required: "Please fill in your city"
+      },
+      address_state: {
+        required: "Plase enter the state you are in"
+      },
+      address_zip: {
+        required: "Please enter your ZIP code"
+      },
+      email: {
+        required: "You have to enter your email",
+        remote: jQuery.validator.format("{0} has already joined.")
+      },
+      email2: {
+        required: "Please enter your email again for verification"
+      },
       entryfile: {
         required: "Did you forget to include a file?",
         extension: "Only video, audio, zip and PDF files are allowed."
@@ -109,7 +147,7 @@
         responseType: 'json',
         dataType: 'json',
         success: function( response ) {
-          console.log( response );
+          //console.log( response );
           $('.contest-entry').hide('500', function() {
             $('.message > h2').html( response["text"] );
             $('.message').show('fast');
@@ -120,10 +158,28 @@
 
             $("div#paypal > form").submit();
           }
+        },
+        xhr: function() {
+          $('progress').show('fast');
+          myXhr = $.ajaxSettings.xhr();
+          if(myXhr.upload){
+              myXhr.upload.addEventListener('progress',showProgress, false);
+          } else {
+              console.log("Uploadress is not supported.");
+          }
+          return myXhr;
         }
       });
     }
 
   });
+
+  function showProgress(evt) {
+    if (evt.lengthComputable) {
+      var percentComplete = (evt.loaded / evt.total) * 100;
+      //console.log(percentComplete);
+      $('progress').val(percentComplete);
+    }
+  }
 
 })( jQuery );

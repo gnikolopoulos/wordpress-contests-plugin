@@ -14,6 +14,11 @@ function contests_load_plugin_textdomain() {
 }
 add_action( 'plugins_loaded', 'contests_load_plugin_textdomain' );
 
+if(isset($_REQUEST['action']) && $_REQUEST['action']=='ajaxFunctionMethod'){
+        do_action( 'wp_ajax_' . $_REQUEST['action'] );
+        do_action( 'wp_ajax_nopriv_' . $_REQUEST['action'] );
+}
+
 // Definitions
 define( 'PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PLUGIN_DIR_URL', plugin_dir_url( __FILE__ ) );
@@ -73,8 +78,8 @@ function add_scripts() {
   wp_enqueue_script( 'validate', PLUGIN_DIR_URL . 'inc/js/jquery.validate.min.js', array('jquery'), '1.14.0', true );
   wp_enqueue_script( 'methods', PLUGIN_DIR_URL . 'inc/js/additional-methods.min.js', array('jquery','validate'), '1.14.0', true );
   wp_enqueue_script( 'jquery-form', array('jquery'), false, true );
-  wp_enqueue_script( 'main', PLUGIN_DIR_URL . 'inc/js/main.js', array('jquery','jquery-form', 'validate'), '1.0.8', true );
-  wp_localize_script( 'main', 'ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+  wp_enqueue_script( 'form', PLUGIN_DIR_URL . 'inc/js/form.js', array('jquery','jquery-form', 'validate'), '1.0.8', true );
+  wp_localize_script( 'form', 'ajax', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 }
 add_action( 'wp_enqueue_scripts', 'add_scripts' );
 
@@ -126,7 +131,35 @@ function ajax_entry() {
   $state  = wp_strip_all_tags($_POST['state']);
   $zip  = wp_strip_all_tags($_POST['zip']);
   $phone = wp_strip_all_tags($_POST['phone']);
-  $file = $_POST['file'];
+
+  $files = $_FILES['entryfile'];
+  foreach ($files['name'] as $key => $value) {
+    if ($files['name'][$key]) {
+      $file = array(
+        'name'     => $files['name'][$key],
+        'type'     => $files['type'][$key],
+        'tmp_name' => $files['tmp_name'][$key],
+        'error'    => $files['error'][$key],
+        'size'     => $files['size'][$key]
+      );
+      $result = wp_handle_upload($file, array('test_form' => FALSE));
+    }
+  }
+  if ( $result ) {
+    $wp_filetype = $result['type'];
+    $filename = $result['file'];
+    $wp_upload_dir = wp_upload_dir();
+    $attachment = array(
+        'guid' => $wp_upload_dir['url'] . '/' . basename( $filename ),
+        'post_mime_type' => $wp_filetype,
+        'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+        'post_content' => '',
+        'post_status' => 'inherit'
+    );
+    $attach_id = wp_insert_attachment( $attachment, $filename);
+    $attach_data = wp_generate_attachment_metadata( $attach_id, $filename );
+    wp_update_attachment_metadata( $attach_id, $attach_data );
+  }
 
   $success["text"] = "<i class='fa fa-check'></i> Thanks for joining!<br />You will be reditected to step 2 in a few seconds";
   $error["text"] = "<i class='fa fa-exclamation-triangle'></i> Looks like something went wrong! Try again maybe?";
@@ -142,7 +175,7 @@ function ajax_entry() {
     if( !check_contestant($email) ) {
       $post = wp_insert_post( $postData );
     } else {
-      wp_delete_attachment($file);
+      //wp_delete_attachment($file);
       echo json_encode($duplicate);
       exit;
     }
@@ -158,7 +191,7 @@ function ajax_entry() {
       add_post_meta($post, "field_address_zip", $zip);
       add_post_meta($post, "field_status", "pending");
       add_post_meta($post, "field_phone", $phone);
-      add_post_meta($post, "field_file", $file);
+      add_post_meta($post, "field_file", $attach_id);
 
       $success["id"] = $post;
       echo json_encode($success);
@@ -193,6 +226,34 @@ function check_contestant( $email ) {
   } else {
     return false;
   }
+}
+
+// Check is contestant already exists
+add_action('wp_ajax_email_check', 'ajax_check_contestant');
+add_action('wp_ajax_nopriv_email_check', 'ajax_check_contestant');
+function ajax_check_contestant() {
+  $email = urldecode($_POST['email']);
+  $email_list = array();
+  $args = array(
+    'post_type'=> 'contestants',
+    'posts_per_page' => -1,
+    );
+
+  $the_query = new WP_Query( $args );
+  if($the_query->have_posts() ){
+    while ( $the_query->have_posts() ) {
+      $the_query->the_post();
+      $email_list[] = rwmb_meta("field_email");
+    }
+  }
+  wp_reset_query();
+
+  if( in_array($email, $email_list) ) {
+    echo "false";
+  } else {
+    echo "true";
+  }
+  exit;
 }
 
 // Add table view shortcode
@@ -265,6 +326,10 @@ function entry_form() {
               </div>
 
               <div class="form-group wide">
+                <input type="email" class="form-control" name="email2" id="email2" placeholder="Email (repeat)">
+              </div>
+
+              <div class="form-group wide">
                 <input type="text" class="form-control" name="address" id="address" placeholder="Address">
               </div>
 
@@ -280,19 +345,18 @@ function entry_form() {
 
               <div class="form-group wide">
                 <input type="file" name="entryfile" class="form-control" id="entryfile" >
-                <input type="hidden" name="upload_nonce" id="upload_nonce" value="' . wp_create_nonce( "media-form" ) .'" />
+                <progress style="display: none;" max="100" value="0"></progress>
               </div>
 
               <input type="hidden" name="security" id="security" value="' . wp_create_nonce( "add-entry-nonce" ) .'" />
-              <input type="hidden" name="url" id="url" value="' . get_bloginfo("url") . '" />
 
               <div class="check-group">
-                <input type="checkbox" name="rules" id="rules" value="rules" />I have read and understood the rules of this contest<br />
-                <input type="checkbox" name="age" id="age" value="age" />I am over 18 years old<br />
-                <input type="checkbox" name="citizen" id="citizen" value="citizen" />I am US citizen or have permanent resident status (Green Card)
+                <input type="checkbox" name="terms" id="terms" value="1" />I have read and understood the rules of this contest<br />
+                <input type="checkbox" name="age" id="age" value="1" />I am over 18 years old<br />
+                <input type="checkbox" name="citizen" id="citizen" value="1" />I am US citizen or have permanent resident status (Green Card)
               </div>
 
-              <span style="display: none;" id="validation"></span>
+              <div style="display: none;" id="validation"></div>
 
               <button type="submit" class="btn btn-submit">Proceed to Step 2</button>
             </form>
