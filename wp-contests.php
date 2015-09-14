@@ -121,6 +121,7 @@ function contestants_custom_columns($column){
 add_action('wp_ajax_entry_add', 'ajax_entry');
 add_action('wp_ajax_nopriv_entry_add', 'ajax_entry');
 function ajax_entry() {
+  global $contest;
   check_ajax_referer( 'add-entry-nonce', 'nonce' );
 
   $email = urldecode($_POST['email']);
@@ -131,6 +132,8 @@ function ajax_entry() {
   $state  = wp_strip_all_tags($_POST['state']);
   $zip  = wp_strip_all_tags($_POST['zip']);
   $phone = wp_strip_all_tags($_POST['phone']);
+  $title = wp_strip_all_tags($_POST['title']);
+  $description = wp_strip_all_tags($_POST['description']);
 
   $files = $_FILES['entryfile'];
   foreach ($files['name'] as $key => $value) {
@@ -191,9 +194,14 @@ function ajax_entry() {
       add_post_meta($post, "field_address_zip", $zip);
       add_post_meta($post, "field_status", "pending");
       add_post_meta($post, "field_phone", $phone);
+      add_post_meta($post, "field_title", $title);
+      add_post_meta($post, "field_description", $description);
       add_post_meta($post, "field_file", $attach_id);
 
       $success["id"] = $post;
+      if( $contest['auto_on'] ) {
+        create_post( $post, $contest['post_cat'], $title, $description, $attach_id );
+      }
       echo json_encode($success);
     } else {
       echo json_encode($error);
@@ -202,6 +210,19 @@ function ajax_entry() {
     echo json_encode($error);
   }
   exit;
+}
+
+function create_post( $id, $category, $title, $text, $file ) {
+  $text .= view_button( $file );
+  $postData = array(
+      'post_name'   => 'wth-' . $id,
+      'post_title'  => '[WTH-' . $id . '] ' . $title,
+      'post_content'  => $text,
+      'post_type'   => 'post',
+      'post_status' => 'draft',
+      'post_category' => $category
+    );
+  wp_insert_post( $postData );
 }
 
 // Check is contestant already exists
@@ -260,7 +281,7 @@ function ajax_check_contestant() {
 add_shortcode('contestants', 'contestants_view');
 function contestants_view( $atts ) {
   extract(shortcode_atts(array(
-      'name'    => "yes",
+      'name'    => "no",
    ), $atts));
 
   $html  = '<table>';
@@ -294,7 +315,7 @@ function contestants_view( $atts ) {
         if( $name == "yes" ) {
           $html .= '<td>' . rwmb_meta("field_first_name") . ' ' . rwmb_meta("field_last_name") . '</td>';
         }
-        $html .= '<td><a href="' . $url . '">' . $name . '</a></td>';
+        $html .= '<td><a href="' . $url . '" alt="' . rwmb_meta("field_title") . '">' . rwmb_meta("field_title") . '</a></td>';
         $html .= '</tr>';
       }
     }
@@ -302,6 +323,15 @@ function contestants_view( $atts ) {
   wp_reset_query();
   $html .= '</tbody>
             </table>';
+  return $html;
+}
+
+// Add button
+function view_button( $attach_id ) {
+  $html = '
+  <br /><br /><div class="button-view">
+            <a class="btn btn-submit" href="' . wp_get_attachment_url($attach_id) . '">View the entry</a>
+           </div>';
   return $html;
 }
 
@@ -340,12 +370,20 @@ function entry_form() {
               </div>
 
               <div class="form-group wide">
-                <input type="text" class="form-control" name="phone" id="phone" placeholder="Phone Number">
+                <input type="text" class="form-control" name="phone" id="phone" placeholder="Phone Number (800) 123 4567">
               </div>
 
               <div class="form-group wide">
                 <input type="file" name="entryfile" class="form-control" id="entryfile" >
                 <progress style="display: none;" max="100" value="0"></progress>
+              </div>
+
+              <div class="form-group wide">
+                <input type="text" class="form-control" name="item_title" id="item_title" placeholder="Item title">
+              </div>
+
+              <div class="form-group wide">
+                <textarea class="form-control" name="item_description" id="item_description">Item Description</textarea>
               </div>
 
               <input type="hidden" name="security" id="security" value="' . wp_create_nonce( "add-entry-nonce" ) .'" />

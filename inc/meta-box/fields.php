@@ -92,7 +92,25 @@ function theme_register_meta_boxes( $meta_boxes ) {
                 'name' => __( 'Phone Number', 'contests' ),
                 'id' => "{$prefix}phone",
                 'type' => 'text',
-                'std' => __( '1234567890', 'contests' ),
+                'std' => __( '(800) 123 4567', 'contests' ),
+                'clone' => false,
+            ),
+
+            // Title
+            array(
+                'name' => __( 'Item Title', 'contests' ),
+                'id' => "{$prefix}title",
+                'type' => 'text',
+                'std' => __( 'Lorem Ipsum', 'contests' ),
+                'clone' => false,
+            ),
+
+            // Title
+            array(
+                'name' => __( 'Item Description', 'contests' ),
+                'id' => "{$prefix}description",
+                'type' => 'textarea',
+                'std' => __( 'Lorem Ipsum', 'contests' ),
                 'clone' => false,
             ),
 

@@ -42,9 +42,15 @@
       phone: {
         phoneUS: true
       },
+      item_title: {
+        required: true
+      },
+      item_description: {
+        required: true
+      },
       entryfile: {
         required: true,
-        extension: "jpg|png|gif|pdf|zip|avi|mp4|mov|wmv|mp3|7z"
+        extension: "jpg|png|gif|pdf|txt|zip|avi|mp4|mov|wmv|mp3|7z"
       },
       terms: {
         required: true
@@ -84,7 +90,7 @@
       },
       entryfile: {
         required: "Did you forget to include a file?",
-        extension: "Only video, audio, zip and PDF files are allowed."
+        extension: "Only video, audio, zip, txt and PDF files are allowed."
       },
       terms: {
         required: "You have to accept the rules of this contest"
@@ -110,6 +116,8 @@
     var state = $('#address_state').val();
     var zip = $('#address_zip').val();
     var phone = $('#phone').val();
+    var title = $('#item_title').val();
+    var description = $('#item_description').val();
     var security = $('#security').val();
     var error = 1;
 
@@ -126,6 +134,8 @@
       fd.append("action", "entry_add");
       fd.append("nonce", security);
       fd.append("phone", phone);
+      fd.append("description", description);
+      fd.append("title", title);
       fd.append("zip", zip);
       fd.append("state", state);
       fd.append("city", city);

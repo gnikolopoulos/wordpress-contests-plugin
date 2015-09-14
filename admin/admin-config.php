@@ -129,7 +129,7 @@
                 'id'       => 'paypal_email',
                 'type'     => 'text',
                 'title'    => __( 'PayPal email', 'contests' ),
-                'default'  => 'info-facilitator@interactive-design.gr',
+                'default'  => 'example@example.com',
             ),
 
             array(
@@ -144,7 +144,7 @@
                 'id'       => 'entry_price',
                 'type'     => 'text',
                 'title'    => __( 'Fee for entering the contest', 'contests' ),
-                'default'  => '9',
+                'default'  => '100',
             ),
 
             array(
@@ -159,6 +159,28 @@
                 'type'     => 'select',
                 'title'    => __( 'Page to return to after transaction', 'contests' ),
                 'data'     => 'pages',
+            ),
+        )
+    ) );
+
+    Redux::setSection( $opt_name, array(
+        'title'      => __( 'Post Settings', 'contests' ),
+        'desc'       => __( 'Auto posting settings', 'contests' ),
+        'id'         => 'opt-post',
+        'icon'       => 'el el-file-new',
+        'fields'     => array(
+            array(
+                'id'       => 'auto_on',
+                'type'     => 'switch',
+                'title'    => __('Auto-create post', 'contests'),
+                'default'  => true,
+            ),
+
+            array(
+                'id'       => 'post_cat',
+                'type'     => 'select',
+                'title'    => __( 'Category for new posts', 'contests' ),
+                'data'     => 'categories',
             ),
         )
     ) );

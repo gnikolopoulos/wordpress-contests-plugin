@@ -48,7 +48,8 @@
   height: 20px;
 }
 
-.contest-entry .btn {
+.contest-entry .btn,
+.button-view .btn {
   display: block;
   margin: 30px auto 0;
   background-color: #24890D;
@@ -60,6 +61,11 @@
   padding: 10px 30px 11px;
   text-transform: uppercase;
   vertical-align: bottom;
+}
+
+.button-view .btn {
+  width: 100px;
+  text-align: center;
 }
 
 .contest-entry .btn:hover {
